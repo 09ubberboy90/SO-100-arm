@@ -27,7 +27,7 @@ def generate_launch_description():
             [
                 FindExecutable(name='xacro'), ' ',
                 PathJoinSubstitution(
-                    [FindPackageShare('so_100_arm'), 'config', 'so_100_arm.urdf.xacro']
+                    [FindPackageShare('so_100_arm'), 'config', 'so_100_arm_wheel.urdf.xacro']
                 ),
                 ' ',
                 'use_fake_hardware:=false'
@@ -37,6 +37,17 @@ def generate_launch_description():
     )
 
     robot_description = {'robot_description': robot_description_content}
+    joint_state_pub = Node(
+                package='joint_state_publisher_gui',
+                executable='joint_state_publisher_gui',
+                name='joint_state_publisher_gui', 
+                parameters=[
+                    # PathJoinSubstitution(
+                    #     [FindPackageShare('so_100_arm'), 'config', 'initial_positions_launch.yaml']
+                    # ),
+                    {"zeros.Elbow": -1.6, "zeros.Gripper": -1.5, "zeros.Shoulder_Pitch": 1.5, "zeros.Shoulder_Rotation": 0, "zeros.Wrist_Pitch": -0.1, "zeros.Wrist_Roll": 1.2, }
+                ],
+    )
     robot_state_pub_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -53,6 +64,7 @@ def generate_launch_description():
             ),
         ],
         output="screen",
+        arguments=['--ros-args', '--log-level', "info"],
         remappings=[
             ('/controller_manager/robot_description', '/robot_description'),
         ]
@@ -68,15 +80,14 @@ def generate_launch_description():
     robot_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["so_100_arm_controller", "-c", "/controller_manager"],
+        arguments=["so_100_position_controller", "-c", "/controller_manager"],
         output="screen",
     )
 
-    gripper_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["so_100_arm_gripper_controller", "-c", "/controller_manager"],
-        output="screen",
+    joint_state_controller_spawner = Node(
+        package="so_100_track",
+        executable="controller",
+        name="joint_state_controller",
     )
 
     # Delay loading and starting robot_controller after joint_state_broadcaster
@@ -106,12 +117,13 @@ def generate_launch_description():
 
     nodes = [
         robot_state_pub_node,
+        # joint_state_pub,
         controller_manager,
         joint_state_broadcaster_spawner,
         delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
-        gripper_controller_spawner,
         rviz_node,
-        zero_pose_node
+        zero_pose_node,
+        joint_state_controller_spawner
     ]
 
     return LaunchDescription([zero_pose_arg, rviz_arg] + nodes) 

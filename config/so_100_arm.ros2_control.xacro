@@ -11,8 +11,9 @@
                 <xacro:unless value="${use_fake_hardware}">
                     <plugin>so_arm_100_controller/SOARM100Interface</plugin>
                     <param name="use_serial">true</param>
-                    <param name="serial_port">/dev/ttyUSB0</param>
+                    <param name="serial_port">/dev/ttyACM4</param>
                     <param name="serial_baudrate">1000000</param>
+                    <param name="calibration_file">/home/baxter/Documents/SO-100-arm/src/so_arm_100_hardware/config/calibration.yaml</param>
                 </xacro:unless>
             </hardware>
             <joint name="Shoulder_Rotation">
