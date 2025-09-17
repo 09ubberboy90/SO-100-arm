@@ -47,6 +47,9 @@ def generate_launch_description():
                     # ),
                     {"zeros.Elbow": -1.6, "zeros.Gripper": -1.5, "zeros.Shoulder_Pitch": 1.5, "zeros.Shoulder_Rotation": 0, "zeros.Wrist_Pitch": -0.1, "zeros.Wrist_Roll": 1.2, }
                 ],
+        remappings=[
+            ('/joint_states', '/so101track/joint_states'),
+        ]
     )
     robot_state_pub_node = Node(
         package='robot_state_publisher',
@@ -123,7 +126,7 @@ def generate_launch_description():
         delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
         rviz_node,
         zero_pose_node,
-        joint_state_controller_spawner
+        # joint_state_controller_spawner
     ]
 
     return LaunchDescription([zero_pose_arg, rviz_arg] + nodes) 

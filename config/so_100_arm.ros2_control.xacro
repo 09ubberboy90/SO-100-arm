@@ -13,7 +13,7 @@
                     <param name="use_serial">true</param>
                     <param name="serial_port">/dev/ttyACM0</param>
                     <param name="serial_baudrate">1000000</param>
-                    <param name="calibration_file">/home/baxter/Documents/LeTrack/ros_ws/install/so_arm_100_hardware/share/so_arm_100_hardware/config/calibration.yaml</param>
+                    <param name="calibration_file">/home/baxter/Documents/LeTrack/ros_ws/src/so_arm_100_hardware/config/calibration.yaml</param>
                 </xacro:unless>
             </hardware>
             <joint name="Shoulder_Rotation">
